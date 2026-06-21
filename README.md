@@ -1,4 +1,4 @@
-# 🚀 CarbonX — Carbon Footprint Platform
+# CarbonX — Carbon Footprint Platform
 
 > **A premium, modern web application** designed to help individuals **understand, track, and reduce** their personal carbon footprint. Leveraging glassmorphic interactive charts, AI-personalized insights, and a robust architecture, CarbonX makes environmental awareness accessible and actionable.
 
@@ -6,7 +6,7 @@ Built with a **Python / FastAPI** backend and a **React + TypeScript** frontend,
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 CarbonX is designed with a decoupled frontend-backend architecture, optimizing for high responsiveness, secure data storage, and fallback mechanisms for AI features.
 
@@ -69,7 +69,7 @@ graph TD
 
 ---
 
-## ✨ Features
+## Features
 
 - **Understand**: Input your lifestyle data (transportation, home energy, diet, and goods spending) to calculate your annual footprint broken down by category, compared against both the global average and a sustainable, Paris-aligned target.
 - **Track**: Save snapshots of your footprint over time anonymously to visualize your trends.
@@ -81,7 +81,7 @@ graph TD
 
 ---
 
-## 🚀 Running Locally
+## Running Locally
 
 ### 1. Clone & Setup
 First, clone the repository and navigate to the project directory:
@@ -123,7 +123,7 @@ npm run dev
 
 ---
 
-## 🧪 Testing & Code Quality
+## Testing & Code Quality
 
 Both backend and frontend are strictly typed and verified to have **100% test coverage**.
 
@@ -148,7 +148,7 @@ npm run test:coverage
 
 ---
 
-## 📦 Docker Container Build
+## Docker Container Build
 
 To build and run the entire application (SPA + API) as a single container:
 ```bash
@@ -159,7 +159,7 @@ docker run -p 8080:8080 -e USE_GEMINI=false -e USE_FIRESTORE=false carbonx
 
 ---
 
-## ☁️ Google Cloud Run Deployment
+## Google Cloud Run Deployment
 
 Deploy the container directly to Cloud Run:
 ```bash

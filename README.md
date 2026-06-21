@@ -84,6 +84,20 @@ graph TD
 
 ---
 
+## Screenshots
+
+Here is a visual overview of the CarbonX premium glassmorphic interface and features:
+
+| Main Dashboard & Carbon footprint | Personalized Insights |
+| :---: | :---: |
+| ![Main Dashboard](images/estimated_carbon_print.jpeg) | ![Personalized Insights](images/personalized_insights.jpeg) |
+
+| Transport Footprint | Home Energy Grid |
+| :---: | :---: |
+| ![Transport Footprint](images/transport_carbon_print.jpeg) | ![Home Energy Grid](images/home_carbon_print.jpeg) |
+
+---
+
 ## Running Locally
 
 ### 1. Clone & Setup

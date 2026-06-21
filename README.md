@@ -106,7 +106,7 @@ source .venv/bin/activate
 pip install -r requirements-dev.txt
 
 # Create .env from template (defaults to offline/local fallback settings):
-cp .env.example .env
+cp ../.env.example .env
 
 # Run with hot reloading on http://localhost:8000:
 uvicorn app.main:app --reload
@@ -163,12 +163,12 @@ docker run -p 8080:8080 -e USE_GEMINI=false -e USE_FIRESTORE=false carbonx
 
 Deploy the container directly to Cloud Run:
 ```bash
-gcloud config set project carbonx-500112
+gcloud config set project carbonx-500114
 gcloud run deploy carbon-platform \
     --source . \
     --region us-central1 \
     --allow-unauthenticated \
-    --set-env-vars PROJECT_ID=carbonx-500112,REGION=us-central1,USE_GEMINI=true,USE_FIRESTORE=true
+    --set-env-vars PROJECT_ID=carbonx-500114,REGION=us-central1,USE_GEMINI=true,USE_FIRESTORE=true
 ```
 
 Ensure the runtime service account has `roles/aiplatform.user` (Gemini) and `roles/datastore.user` (Firestore) IAM roles.

@@ -16,10 +16,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """Validated application settings, sourced from the environment / .env."""
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(env_file=(".env", "../.env"), env_file_encoding="utf-8", extra="ignore")
 
     # Google Cloud
-    project_id: str = "carbonx-500112"
+    project_id: str = "carbonx-500114"
     region: str = "us-central1"
 
     # Feature flags — let the app degrade gracefully without GCP access.

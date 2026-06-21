@@ -111,11 +111,7 @@ export default function App() {
         </p>
         <p className="developer-credit">
           Built by{" "}
-          <a
-            href="https://github.com/nishnarudkar"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="https://github.com/nishnarudkar" target="_blank" rel="noopener noreferrer">
             Nishant Narudkar
           </a>
         </p>

@@ -37,9 +37,8 @@ def _transport_annual_kg(t: TransportInput) -> float:
 
 def _home_annual_kg(h: HomeInput) -> float:
     """Calculate the annual home footprint in kg CO2e per household member."""
-    electricity = (
-        h.electricity_kwh_per_month * factors.MONTHS_PER_YEAR * factors.ELECTRICITY_PER_KWH
-    )
+    factor = factors.ELECTRICITY_PER_KWH_REGIONAL[h.region]
+    electricity = h.electricity_kwh_per_month * factors.MONTHS_PER_YEAR * factor
     gas = h.natural_gas_kwh_per_month * factors.MONTHS_PER_YEAR * factors.NATURAL_GAS_PER_KWH
     # Household energy is shared, so attribute a per-person share.
     return (electricity + gas) / h.household_size

@@ -2,6 +2,8 @@
 
 export type CarFuel = "petrol" | "diesel" | "hybrid" | "electric";
 
+export type GridRegion = "global" | "us" | "uk" | "eu" | "in" | "fr";
+
 export type DietType =
   | "heavy_meat"
   | "medium_meat"
@@ -22,6 +24,7 @@ export interface CarbonInput {
     electricity_kwh_per_month: number;
     natural_gas_kwh_per_month: number;
     household_size: number;
+    region: GridRegion;
   };
   diet: DietType;
   consumption: {
@@ -77,6 +80,7 @@ export const emptyInput = (): CarbonInput => ({
     electricity_kwh_per_month: 0,
     natural_gas_kwh_per_month: 0,
     household_size: 1,
+    region: "global",
   },
   diet: "medium_meat",
   consumption: {
@@ -84,3 +88,21 @@ export const emptyInput = (): CarbonInput => ({
     waste_kg_per_week: 0,
   },
 });
+
+export interface CarbonFactors {
+  diet_annual_kg?: Record<string, number>;
+  car_factors_per_km?: Record<string, number>;
+  weeks_per_year?: number;
+  months_per_year?: number;
+  public_transit_per_km?: number;
+  short_haul_trip_km?: number;
+  flight_short_haul_per_km?: number;
+  long_haul_trip_km?: number;
+  flight_long_haul_per_km?: number;
+  electricity_per_kwh_regional?: Record<string, number>;
+  natural_gas_per_kwh?: number;
+  goods_per_usd_monthly?: number;
+  waste_per_kg?: number;
+  global_avg_annual_kg?: number;
+  sustainable_target_annual_kg?: number;
+}

@@ -74,3 +74,13 @@ def test_security_headers_present(client):
     assert resp.headers["X-Content-Type-Options"] == "nosniff"
     assert resp.headers["X-Frame-Options"] == "DENY"
     assert "Content-Security-Policy" in resp.headers
+
+
+def test_get_factors(client):
+    resp = client.get("/api/factors")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert "diet_annual_kg" in body
+    assert "electricity_per_kwh_regional" in body
+    assert body["weeks_per_year"] == 52
+    assert body["electricity_per_kwh_regional"]["fr"] == 0.050

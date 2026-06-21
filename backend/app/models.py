@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
-from app.carbon.factors import CarFuel, DietType
+from app.carbon.factors import CarFuel, DietType, GridRegion
 
 # Generous-but-finite upper bounds keep inputs sane without rejecting real users.
 _MAX_KM_WEEK = 20_000.0
@@ -36,6 +36,7 @@ class HomeInput(BaseModel):
     electricity_kwh_per_month: float = Field(0, ge=0, le=_MAX_KWH_MONTH)
     natural_gas_kwh_per_month: float = Field(0, ge=0, le=_MAX_KWH_MONTH)
     household_size: int = Field(1, ge=1, le=50)
+    region: GridRegion = GridRegion.GLOBAL
 
 
 class ConsumptionInput(BaseModel):

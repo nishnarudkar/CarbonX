@@ -1,6 +1,4 @@
-// Typed client for the backend API. Same-origin in production; proxied in dev.
-
-import type { CarbonInput, Entry, FootprintResult, InsightsResponse } from "./types";
+import type { CarbonInput, CarbonFactors, Entry, FootprintResult, InsightsResponse } from "./types";
 
 /** Error with an HTTP status code attached, thrown by postJson on non-2xx. */
 interface ApiError extends Error {
@@ -8,7 +6,7 @@ interface ApiError extends Error {
 }
 
 /** Type guard: checks whether an unknown value is an ApiError. */
-function isApiError(err: unknown): err is ApiError {
+export function isApiError(err: unknown): err is ApiError {
   return err instanceof Error && typeof (err as ApiError).status === "number";
 }
 
@@ -29,15 +27,8 @@ async function postJson<T>(path: string, body: unknown): Promise<T> {
 }
 
 /** Determine if an error is a real backend failure that should be thrown instead of falling back. */
-function shouldThrow(err: unknown): boolean {
-  if (isApiError(err)) {
-    // If the status is 404 (Not Found) or 405 (Method Not Allowed), we fall back
-    // because static hosts like GitHub Pages return these for API calls.
-    if (err.status === 404 || err.status === 405) {
-      return false;
-    }
-    return true;
-  }
+function shouldThrow(): boolean {
+  // Enforce absolute graceful degradation: always fall back to local computation on any API failure.
   return false;
 }
 
@@ -48,7 +39,7 @@ export async function calculate(input: CarbonInput): Promise<FootprintResult> {
   try {
     return await postJson<FootprintResult>("/api/calculate", input);
   } catch (err: unknown) {
-    if (shouldThrow(err)) throw err;
+    if (shouldThrow()) throw err;
     return localCalculate(input);
   }
 }
@@ -58,7 +49,7 @@ export async function getInsights(input: CarbonInput): Promise<InsightsResponse>
   try {
     return await postJson<InsightsResponse>("/api/insights", input);
   } catch (err: unknown) {
-    if (shouldThrow(err)) throw err;
+    if (shouldThrow()) throw err;
     const res = localCalculate(input);
     return localGetInsights(input, res);
   }
@@ -77,7 +68,7 @@ export async function saveEntry(
       result,
     });
   } catch (err: unknown) {
-    if (shouldThrow(err)) throw err;
+    if (shouldThrow()) throw err;
     return localSaveEntry(deviceId, input, result);
   }
 }
@@ -94,7 +85,16 @@ export async function listEntries(deviceId: string): Promise<Entry[]> {
     }
     return (await res.json()) as Entry[];
   } catch (err: unknown) {
-    if (shouldThrow(err)) throw err;
+    if (shouldThrow()) throw err;
     return localListEntries(deviceId);
   }
+}
+
+/** Fetch dynamic carbon factors from the backend API. */
+export async function fetchFactors(): Promise<CarbonFactors> {
+  const res = await fetch("/api/factors");
+  if (!res.ok) {
+    throw new Error(`Failed to fetch carbon factors: ${res.status}`);
+  }
+  return (await res.json()) as CarbonFactors;
 }

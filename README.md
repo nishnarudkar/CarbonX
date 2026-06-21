@@ -56,28 +56,31 @@ graph TD
    - **React 18 & TypeScript 5**: A strictly-typed, component-based user interface.
    - **Vite 6**: Fast build tool and dev server.
    - **Glassmorphic Theme**: Designed with an ultra-premium obsidian and carbon-graphite styling using customized modern CSS and responsive layouts.
-   - **Anonymous Tracking**: Snapshots of users' carbon footprints are saved using a persistent device ID stored in `localStorage`, maintaining user privacy while enabling historical trends.
+   - **Anonymous Tracking & Sync**: Snapshots of users' carbon footprints are saved using a persistent device ID stored in `localStorage`. Automatically caches history locally when offline and syncs them once the backend is reachable.
 
 2. **Backend API**:
    - **FastAPI (Python 3.10+)**: High-performance, asynchronous web framework.
-   - **Carbon Calculation Engine**: Decoupled module calculating annual footprints based on transportation, home energy, diet, and goods spending.
+   - **Carbon Calculation Engine**: Decoupled module calculating annual footprints based on transportation, regional home energy, diet, and goods spending.
    - **Insights Fallback Router**: Ensures the application remains functional even when offline or if Vertex AI limits are reached, by falling back transparently from Gemini to a deterministic rule-based engine.
 
 3. **Data & External Services**:
    - **Google Gemini (Vertex AI)**: Analyzes user inputs dynamically and generates personalized, contextual suggestions to reduce emissions.
    - **Google Cloud Firestore**: Persists snapshot entries keyed by the anonymous device ID to render historical progress charts.
+   - **Single Source of Truth for Factors**: Backend API exposes `/api/factors` which dynamically feeds current coefficients to the frontend on startup.
 
 ---
 
 ## Features
 
 - **Understand**: Input your lifestyle data (transportation, home energy, diet, and goods spending) to calculate your annual footprint broken down by category, compared against both the global average and a sustainable, Paris-aligned target.
-- **Track**: Save snapshots of your footprint over time anonymously to visualize your trends.
+- **Track & Auto-Sync**: Save snapshots of your footprint over time anonymously to visualize your trends. Entries saved while offline are queued and synced to the cloud database automatically once connection is restored.
 - **Reduce**: Receive personalized, quantified actions targeting your highest emission categories first.
 - **AI-Personalized Insights**: Powered by Google Gemini (Vertex AI) with a robust, deterministic rule-based engine fallback for offline and local development.
+- **Regional Grid Customization**: Home energy footprint calculations adjust to country-specific power grid carbon intensities (US, UK, Europe, India, France, or Global average).
+- **Graceful Degradation**: Always falls back to local client calculation and local history storage on any backend error (including HTTP 500), avoiding any UI breakage.
 - **Premium High-Tech Design**: A beautiful, dark space-graphite to obsidian theme featuring glowing indigo/violet glassmorphic cards, typography from Google Fonts (**Outfit**), neon glowing accent states, custom scrollbars, and smooth `@keyframes` chart animations.
-- **100% Test Coverage**: Both backend (`pytest`) and frontend (`vitest`) are covered with 100% statement and branch test coverage.
-- **Accessibility (a11y)**: Built to comply with WCAG AA accessibility standards. Features semantic HTML5, explicit keyboard focus outlines, skip-to-main content navigation, and screen-reader polite status live announcements.
+- **Extensive Test Coverage**: Both backend (`pytest`) and frontend (`vitest`) are covered with high test coverage (>99% statements, >96% branches for frontend; 100% for backend).
+- **Accessibility (a11y)**: Built to comply with WCAG AA accessibility standards. Features semantic HTML5, visually hidden tables for screen reader compatibility, explicit keyboard focus outlines, skip-to-main content navigation, and screen-reader polite status live announcements.
 
 ---
 

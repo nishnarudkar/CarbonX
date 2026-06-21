@@ -46,7 +46,7 @@ export function ResultBreakdown({ result }: Props) {
       </div>
 
       {/* Accessible data table equivalent of the chart. */}
-      <table className="history">
+      <table className="history visually-hidden">
         <caption className="visually-hidden">Annual emissions by category in kg CO2e</caption>
         <thead>
           <tr>

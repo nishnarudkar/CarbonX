@@ -63,6 +63,7 @@ describe("CalculatorForm", () => {
         electricity_kwh_per_month: 250,
         natural_gas_kwh_per_month: 120,
         household_size: 3,
+        region: "global",
       },
       diet: "vegetarian",
       consumption: {

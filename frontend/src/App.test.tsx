@@ -12,6 +12,7 @@ vi.mock("./lib/api", () => ({
   getInsights: vi.fn(),
   saveEntry: vi.fn(),
   listEntries: vi.fn(),
+  fetchFactors: vi.fn(),
 }));
 
 import * as api from "./lib/api";
@@ -48,6 +49,7 @@ beforeEach(() => {
     input: {} as never,
     result,
   });
+  vi.mocked(api.fetchFactors).mockResolvedValue({});
 });
 
 /** Render the app and wait for the initial history load to settle. */

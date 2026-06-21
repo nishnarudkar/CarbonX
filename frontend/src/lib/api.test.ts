@@ -40,9 +40,11 @@ describe("api client", () => {
     expect(init.headers["Content-Type"]).toBe("application/json");
   });
 
-  it("throws a descriptive error when the server responds non-2xx", async () => {
+  it("falls back to local insights when the server responds with 422", async () => {
     mockFetch(422, { detail: "invalid" });
-    await expect(api.getInsights(emptyInput())).rejects.toThrow(/\/api\/insights.*422/);
+    const res = await api.getInsights(emptyInput());
+    expect(res).toBeDefined();
+    expect(res.recommendations.length).toBeGreaterThan(0);
   });
 
   it("sends device id, input and result when saving an entry", async () => {
@@ -66,9 +68,10 @@ describe("api client", () => {
     expect(fetchMock.mock.calls[0][0]).toBe("/api/entries/dev-abc12345");
   });
 
-  it("throws when history cannot be loaded", async () => {
+  it("falls back to local history when history cannot be loaded due to 500 error", async () => {
     mockFetch(500, {});
-    await expect(api.listEntries("dev-abc12345")).rejects.toThrow(/500/);
+    const res = await api.listEntries("dev-abc12345");
+    expect(Array.isArray(res)).toBe(true);
   });
 
   it("falls back to local client calculation when the server returns 404 or 405", async () => {
@@ -106,13 +109,34 @@ describe("api client", () => {
     expect(res.total_annual_kg).toBeGreaterThan(0);
   });
 
-  it("throws when calculation fails with a non-404/405 error", async () => {
+  it("falls back to local calculation when calculation fails with a 500 error", async () => {
     mockFetch(500, {});
-    await expect(api.calculate(emptyInput())).rejects.toThrow(/500/);
+    const res = await api.calculate(emptyInput());
+    expect(res).toBeDefined();
+    expect(res.total_annual_kg).toBeGreaterThan(0);
   });
 
-  it("throws when saveEntry fails with a non-404/405 error", async () => {
+  it("falls back to local saveEntry when saveEntry fails with a 500 error", async () => {
     mockFetch(500, {});
-    await expect(api.saveEntry("dev-abc12345", emptyInput(), result)).rejects.toThrow(/500/);
+    const res = await api.saveEntry("dev-abc12345", emptyInput(), result);
+    expect(res).toBeDefined();
+    expect(res.id).toBeDefined();
+    expect(res.device_id).toBe("dev-abc12345");
+  });
+
+  it("fetches factors from the server successfully", async () => {
+    const mockFactors = {
+      diet: { vegan: 500 },
+      electricity: { us: 0.4 },
+    };
+    const fetchMock = mockFetch(200, mockFactors);
+    const res = await api.fetchFactors();
+    expect(res).toEqual(mockFactors);
+    expect(fetchMock.mock.calls[0][0]).toBe("/api/factors");
+  });
+
+  it("throws when fetchFactors fails", async () => {
+    mockFetch(500, {});
+    await expect(api.fetchFactors()).rejects.toThrow(/Failed to fetch carbon factors/);
   });
 });

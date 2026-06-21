@@ -22,13 +22,58 @@ export function useFootprint() {
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState("");
 
+  const syncOfflineEntries = useCallback(async () => {
+    try {
+      const raw = window.localStorage.getItem("carbon_local_history_entries");
+      if (!raw) return;
+      const all = JSON.parse(raw) as Entry[];
+      const localEntries = all.filter((e) => e.device_id === deviceId && e.id.startsWith("local-"));
+      if (localEntries.length === 0) return;
+
+      const syncedIds: string[] = [];
+      for (const entry of localEntries) {
+        const saved = await api.saveEntry(deviceId, entry.input, entry.result);
+        if (!saved.id.startsWith("local-")) {
+          syncedIds.push(entry.id);
+        } else {
+          break; // server is still down or failed
+        }
+      }
+
+      if (syncedIds.length > 0) {
+        const rawNow = window.localStorage.getItem("carbon_local_history_entries");
+        if (rawNow) {
+          const currentAll = JSON.parse(rawNow) as Entry[];
+          const filtered = currentAll.filter((e) => !syncedIds.includes(e.id));
+          window.localStorage.setItem("carbon_local_history_entries", JSON.stringify(filtered));
+        }
+      }
+    } catch {
+      // fail silently
+    }
+  }, [deviceId]);
+
   const loadHistory = useCallback(async () => {
     try {
+      await syncOfflineEntries();
       setEntries(await api.listEntries(deviceId));
     } catch {
       // History is non-critical; fail silently rather than blocking the app.
     }
-  }, [deviceId]);
+  }, [deviceId, syncOfflineEntries]);
+
+  useEffect(() => {
+    async function init() {
+      try {
+        const fetched = await api.fetchFactors();
+        const { updateFactors } = await import("../lib/clientEngine");
+        updateFactors(fetched);
+      } catch {
+        // Silently use local defaults if API is unreachable
+      }
+    }
+    void init();
+  }, []);
 
   useEffect(() => {
     void loadHistory();

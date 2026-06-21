@@ -1,5 +1,6 @@
 import type {
   CarbonInput,
+  CarbonFactors,
   Entry,
   FootprintResult,
   InsightsResponse,
@@ -7,7 +8,8 @@ import type {
 } from "./types";
 
 // Constant carbon factors matching backend/app/carbon/factors.py
-const DIET_ANNUAL_KG = {
+// Constant carbon factors matching backend/app/carbon/factors.py
+export let DIET_ANNUAL_KG = {
   heavy_meat: 3300.0,
   medium_meat: 2500.0,
   low_meat: 1900.0,
@@ -16,29 +18,60 @@ const DIET_ANNUAL_KG = {
   vegan: 1050.0,
 };
 
-const CAR_FACTORS_PER_KM = {
+export let CAR_FACTORS_PER_KM = {
   petrol: 0.17,
   diesel: 0.171,
   hybrid: 0.12,
   electric: 0.047,
 };
 
-const WEEKS_PER_YEAR = 52;
-const MONTHS_PER_YEAR = 12;
+export let WEEKS_PER_YEAR = 52;
+export let MONTHS_PER_YEAR = 12;
 
-const PUBLIC_TRANSIT_PER_KM = 0.06;
-const SHORT_HAUL_TRIP_KM = 1100.0;
-const FLIGHT_SHORT_HAUL_PER_KM = 0.158;
-const LONG_HAUL_TRIP_KM = 6500.0;
-const FLIGHT_LONG_HAUL_PER_KM = 0.15;
+export let PUBLIC_TRANSIT_PER_KM = 0.06;
+export let SHORT_HAUL_TRIP_KM = 1100.0;
+export let FLIGHT_SHORT_HAUL_PER_KM = 0.158;
+export let LONG_HAUL_TRIP_KM = 6500.0;
+export let FLIGHT_LONG_HAUL_PER_KM = 0.15;
 
-const ELECTRICITY_PER_KWH = 0.45;
-const NATURAL_GAS_PER_KWH = 0.183;
-const GOODS_PER_USD_MONTHLY = 0.4;
-const WASTE_PER_KG = 0.58;
+export const ELECTRICITY_PER_KWH = 0.45;
+export let ELECTRICITY_PER_KWH_REGIONAL: Record<string, number> = {
+  global: 0.45,
+  us: 0.37,
+  uk: 0.15,
+  eu: 0.23,
+  in: 0.71,
+  fr: 0.05,
+};
+export let NATURAL_GAS_PER_KWH = 0.183;
+export let GOODS_PER_USD_MONTHLY = 0.4;
+export let WASTE_PER_KG = 0.58;
 
-const GLOBAL_AVG_ANNUAL_KG = 4800.0;
-const SUSTAINABLE_TARGET_ANNUAL_KG = 2000.0;
+export let GLOBAL_AVG_ANNUAL_KG = 4800.0;
+export let SUSTAINABLE_TARGET_ANNUAL_KG = 2000.0;
+
+/** Update carbon factors dynamically from the backend settings. */
+export function updateFactors(newFactors: CarbonFactors) {
+  if (newFactors.diet_annual_kg) DIET_ANNUAL_KG = newFactors.diet_annual_kg;
+  if (newFactors.car_factors_per_km) CAR_FACTORS_PER_KM = newFactors.car_factors_per_km;
+  if (newFactors.weeks_per_year) WEEKS_PER_YEAR = newFactors.weeks_per_year;
+  if (newFactors.months_per_year) MONTHS_PER_YEAR = newFactors.months_per_year;
+  if (newFactors.public_transit_per_km) PUBLIC_TRANSIT_PER_KM = newFactors.public_transit_per_km;
+  if (newFactors.short_haul_trip_km) SHORT_HAUL_TRIP_KM = newFactors.short_haul_trip_km;
+  if (newFactors.flight_short_haul_per_km)
+    FLIGHT_SHORT_HAUL_PER_KM = newFactors.flight_short_haul_per_km;
+  if (newFactors.long_haul_trip_km) LONG_HAUL_TRIP_KM = newFactors.long_haul_trip_km;
+  if (newFactors.flight_long_haul_per_km)
+    FLIGHT_LONG_HAUL_PER_KM = newFactors.flight_long_haul_per_km;
+  if (newFactors.electricity_per_kwh_regional)
+    ELECTRICITY_PER_KWH_REGIONAL = newFactors.electricity_per_kwh_regional;
+  if (newFactors.natural_gas_per_kwh) NATURAL_GAS_PER_KWH = newFactors.natural_gas_per_kwh;
+  if (newFactors.goods_per_usd_monthly) GOODS_PER_USD_MONTHLY = newFactors.goods_per_usd_monthly;
+  if (newFactors.waste_per_kg) WASTE_PER_KG = newFactors.waste_per_kg;
+  if (newFactors.global_avg_annual_kg) GLOBAL_AVG_ANNUAL_KG = newFactors.global_avg_annual_kg;
+  if (newFactors.sustainable_target_annual_kg)
+    SUSTAINABLE_TARGET_ANNUAL_KG = newFactors.sustainable_target_annual_kg;
+}
 
 const FLIGHT_REDUCTION_SHARE = 0.5;
 const HOME_ENERGY_REDUCTION_SHARE = 0.33;
@@ -78,7 +111,8 @@ export function localCalculate(data: CarbonInput): FootprintResult {
   const transportTotal = car + transit + flights;
 
   // Home
-  const electricity = data.home.electricity_kwh_per_month * MONTHS_PER_YEAR * ELECTRICITY_PER_KWH;
+  const gridIntensity = ELECTRICITY_PER_KWH_REGIONAL[data.home.region] || ELECTRICITY_PER_KWH;
+  const electricity = data.home.electricity_kwh_per_month * MONTHS_PER_YEAR * gridIntensity;
   const gas = data.home.natural_gas_kwh_per_month * MONTHS_PER_YEAR * NATURAL_GAS_PER_KWH;
   const homeTotal = (electricity + gas) / data.home.household_size;
 

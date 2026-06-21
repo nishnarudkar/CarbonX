@@ -63,6 +63,7 @@ describe("clientEngine", () => {
           electricity_kwh_per_month: 300,
           natural_gas_kwh_per_month: 150,
           household_size: 2,
+          region: "global",
         },
       };
       const res = localCalculate(input);
@@ -163,6 +164,7 @@ describe("clientEngine", () => {
           electricity_kwh_per_month: 100,
           natural_gas_kwh_per_month: 0,
           household_size: 1,
+          region: "global",
         },
       };
       const result = localCalculate(input);
@@ -228,6 +230,35 @@ describe("clientEngine", () => {
       window.localStorage.setItem("carbon_local_history_entries", "invalid-json{");
       const entries = localListEntries("dev-test-123");
       expect(entries).toEqual([]);
+    });
+  });
+
+  describe("updateFactors", () => {
+    it("updates all factor constants when provided", async () => {
+      const clientEngine = await import("./clientEngine");
+      clientEngine.updateFactors({
+        diet_annual_kg: { heavy_meat: 9999 },
+        car_factors_per_km: { petrol: 9.9 },
+        weeks_per_year: 99,
+        months_per_year: 99,
+        public_transit_per_km: 9.9,
+        short_haul_trip_km: 999,
+        flight_short_haul_per_km: 9.9,
+        long_haul_trip_km: 9999,
+        flight_long_haul_per_km: 9.9,
+        electricity_per_kwh_regional: { us: 9.9 },
+        natural_gas_per_kwh: 9.9,
+        goods_per_usd_monthly: 9.9,
+        waste_per_kg: 9.9,
+        global_avg_annual_kg: 9999,
+        sustainable_target_annual_kg: 9999,
+      });
+
+      expect(clientEngine.DIET_ANNUAL_KG.heavy_meat).toBe(9999);
+      expect(clientEngine.CAR_FACTORS_PER_KM.petrol).toBe(9.9);
+
+      // Verify empty update does not throw
+      clientEngine.updateFactors({});
     });
   });
 });

@@ -115,3 +115,16 @@ def test_values_are_rounded_and_finite():
     for v in result.breakdown_kg.values():
         assert math.isfinite(v)
         assert round(v, 2) == v
+
+
+def test_regional_grid_intensity():
+    # France grid is much cleaner than India grid
+    france = calculate_footprint(
+        CarbonInput(home=HomeInput(electricity_kwh_per_month=500, region=factors.GridRegion.FR))
+    )
+    india = calculate_footprint(
+        CarbonInput(home=HomeInput(electricity_kwh_per_month=500, region=factors.GridRegion.IN))
+    )
+    assert france.breakdown_kg["home"] < india.breakdown_kg["home"]
+    expected_france = (500 * 12 * 0.050) / 1
+    assert france.breakdown_kg["home"] == pytest.approx(expected_france)

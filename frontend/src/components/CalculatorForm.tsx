@@ -1,6 +1,21 @@
 import { useState } from "react";
-import { type CarbonInput, type CarFuel, type DietType, emptyInput } from "../lib/types";
+import {
+  type CarbonInput,
+  type CarFuel,
+  type DietType,
+  type GridRegion,
+  emptyInput,
+} from "../lib/types";
 import { NumberField } from "./NumberField";
+
+const REGION_OPTIONS: { value: GridRegion; label: string }[] = [
+  { value: "global", label: "Global Average" },
+  { value: "us", label: "United States" },
+  { value: "uk", label: "United Kingdom" },
+  { value: "eu", label: "Europe (Average)" },
+  { value: "in", label: "India" },
+  { value: "fr", label: "France" },
+];
 
 interface Props {
   onSubmit: (input: CarbonInput) => void;
@@ -117,6 +132,20 @@ export function CalculatorForm({ onSubmit, loading }: Props) {
           value={input.home.natural_gas_kwh_per_month}
           onChange={(v) => patchHome({ natural_gas_kwh_per_month: v })}
         />
+        <div className="field">
+          <label htmlFor="region">Electricity grid region</label>
+          <select
+            id="region"
+            value={input.home.region}
+            onChange={(e) => patchHome({ region: e.target.value as GridRegion })}
+          >
+            {REGION_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </div>
         <NumberField
           id="household"
           label="People in household"

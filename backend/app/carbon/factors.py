@@ -57,9 +57,28 @@ FLIGHT_LONG_HAUL_PER_KM: float = 0.150
 SHORT_HAUL_TRIP_KM: float = 1100.0
 LONG_HAUL_TRIP_KM: float = 6500.0
 
-# ──────────────────────────── Home energy ───────────────────────────
-# kg CO2e per kWh of grid electricity (global-ish average; grids vary widely).
-# Source: IEA / Our World in Data ~2022 world average.
+class GridRegion(str, Enum):
+    """Grid region for electricity emission factors."""
+
+    GLOBAL = "global"
+    US = "us"
+    UK = "uk"
+    EU = "eu"
+    IN = "in"
+    FR = "fr"
+
+
+# Regional electricity emission factors (kg CO2e per kWh).
+# Sources: IEA, EPA, DEFRA, European Environment Agency, India Central Electricity Authority.
+ELECTRICITY_PER_KWH_REGIONAL: dict[GridRegion, float] = {
+    GridRegion.GLOBAL: 0.450,
+    GridRegion.US: 0.370,
+    GridRegion.UK: 0.150,
+    GridRegion.EU: 0.230,
+    GridRegion.IN: 0.710,
+    GridRegion.FR: 0.050,
+}
+
 ELECTRICITY_PER_KWH: float = 0.450
 # kg CO2e per kWh of natural gas (heating). Source: DEFRA 2023.
 NATURAL_GAS_PER_KWH: float = 0.183

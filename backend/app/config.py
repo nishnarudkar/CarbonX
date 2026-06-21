@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     # Google Cloud
-    project_id: str = "virtual-prompt-week-3"
+    project_id: str = "carbonx-500112"
     region: str = "us-central1"
 
     # Feature flags — let the app degrade gracefully without GCP access.

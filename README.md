@@ -163,12 +163,12 @@ docker run -p 8080:8080 -e USE_GEMINI=false -e USE_FIRESTORE=false carbonx
 
 Deploy the container directly to Cloud Run:
 ```bash
-gcloud config set project virtual-prompt-week-3
+gcloud config set project carbonx-500112
 gcloud run deploy carbon-platform \
     --source . \
     --region us-central1 \
     --allow-unauthenticated \
-    --set-env-vars PROJECT_ID=virtual-prompt-week-3,REGION=us-central1,USE_GEMINI=true,USE_FIRESTORE=true
+    --set-env-vars PROJECT_ID=carbonx-500112,REGION=us-central1,USE_GEMINI=true,USE_FIRESTORE=true
 ```
 
 Ensure the runtime service account has `roles/aiplatform.user` (Gemini) and `roles/datastore.user` (Firestore) IAM roles.
